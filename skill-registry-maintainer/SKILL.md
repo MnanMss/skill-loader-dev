@@ -1,7 +1,8 @@
 ---
 name: skill-registry-maintainer
 description: >
-  本地 skill 仓库维护器。按需加载，用于扫描仓库、重建 index.json、检查配置、发现重复和缺失元数据。
+  本地 skill 仓库维护器。它是由 skill-loader 路由过来的维护 skill，按需加载，
+  用于扫描仓库、重建 index.json、检查配置、发现重复和缺失元数据，以及处理新增、减少、更新 skill。
   仅在用户明确提出维护 skill 仓库时使用。
 trigger:
   - 用户说"更新索引"
@@ -9,6 +10,9 @@ trigger:
   - 用户说"重建 index.json"
   - 用户说"检查 skill-loader 配置"
   - 用户说"整理/维护 skill 仓库"
+  - 用户说"新增一个 skill 到仓库"
+  - 用户说"把某个 skill 从仓库移除"
+  - 用户说"更新某个已收录 skill"
 ---
 
 # Skill Registry Maintainer
@@ -24,6 +28,9 @@ trigger:
 - 读取并校验 `skill-loader` 配置
 - 扫描本地 skill 仓库目录
 - 重建 `index.json`
+- 新增 skill 到 registry
+- 从 registry 减少或移除 skill
+- 更新已收录 skill
 - 检查重复条目
 - 检查缺失的 `name` 或 `description`
 - 检查索引路径和目录结构是否一致
