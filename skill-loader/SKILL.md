@@ -102,12 +102,42 @@ C:\Users\<username>\.config\skill-loader\config.json
 | `fallback.searchCommand` | 远程搜索命令 |
 | `aliases` | 功能关键词到 skill 名称的映射 |
 
+### 内置默认值
+
+当以上 3 级用户配置均未命中时，skill-loader 使用以下内置默认值：
+
+```json
+{
+  "version": "1.0.0",
+  "registry": {
+    "path": "~/skills-registry",
+    "indexFile": "index.json"
+  },
+  "behavior": {
+    "installScope": "project",
+    "autoSearchRemote": true,
+    "autoSearchWeb": false,
+    "confirmBeforeInstall": true
+  },
+  "fallback": {
+    "remoteRegistry": "skills.sh",
+    "searchCommand": "npx skills find"
+  },
+  "aliases": {}
+}
+```
+
+说明：
+- `registry.path` 中的 `~` 根据操作系统展开为实际用户目录
+- `confirmBeforeInstall: true` 为保守策略，首次使用避免误装
+- `aliases` 为空，避免内置别名与全局 skill 冲突
+
 ### 配置加载优先级
 
 1. `~/.config/skill-loader/config.json`
 2. `./skill-loader/config.json`（项目本地实际配置，建议由 `config.example.json` 复制生成，不提交）
 3. `./skill-loader/config.example.json`（示例配置模板）
-4. 内置默认值
+4. 内置默认值（见上文）
 
 ## 意图识别
 
@@ -149,18 +179,52 @@ C:\Users\<username>\.config\skill-loader\config.json
 
 ### Step 1：读取配置
 
-优先读取用户配置文件，获取：
+按以下优先级读取配置：
+
+1. `~/.config/skill-loader/config.json`
+2. `./skill-loader/config.json`
+3. `./skill-loader/config.example.json`
+4. 内置默认值
+
+**首次使用引导：**
+
+如果前 3 级配置均未找到（没有任何用户自定义配置），进入首次使用引导流程：
+
+1. **告知用户**：
+   > 首次使用 skill-loader，尚未检测到配置文件。skill-loader 负责识别项目级 skill 安装意图与维护意图，并从本地 registry 加载 skill。
+
+2. **询问 registry 路径**：
+   > 你希望将本地 skill 仓库放在哪个目录？
+   > 默认建议：
+   > - Windows：`C:/Users/<username>/skills-registry`
+   > - macOS / Linux：`~/skills-registry`
+
+   等待用户回复。若用户接受默认或给出路径，记录下来。
+
+3. **询问是否持久化配置**：
+   > 是否为你创建配置文件 `~/.config/skill-loader/config.json`？
+   > （推荐创建，否则每次使用内置默认值）
+
+   - 若用户同意：使用 Write 工具创建配置文件，使用用户指定的 registry 路径 + 内置默认值填充其余字段
+   - 若用户拒绝：继续使用内置默认值，本次会话生效
+
+4. **检查 registry 目录**：
+   如果用户指定的 registry 路径不存在，询问：
+   > registry 目录 `<path>` 不存在，是否自动创建？
+
+   若同意，创建目录。
+
+5. 引导完成后，继续后续加载流程。
+
+**配置文件已存在时：**
+
+直接读取生效配置，获取：
 
 - `registry.path`
 - `registry.indexFile`
 - `behavior.confirmBeforeInstall`
 - `behavior.autoSearchRemote`
 - `aliases`
-
-如果配置文件不存在：
-
-> 检测到 skill-loader 配置文件不存在，正在使用默认配置。  
-> 如需自定义，请创建 `~/.config/skill-loader/config.json`。
 
 ### Step 2：解析需求
 

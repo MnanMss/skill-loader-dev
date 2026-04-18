@@ -8,7 +8,7 @@
     "installScope": "project",
     "autoSearchRemote": true,
     "autoSearchWeb": false,
-    "confirmBeforeInstall": false
+    "confirmBeforeInstall": true
   },
   "fallback": {
     "remoteRegistry": "skills.sh",

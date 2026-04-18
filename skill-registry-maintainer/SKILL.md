@@ -60,6 +60,8 @@ trigger:
 - `registry.indexFile`
 - `aliases`
 
+如果配置不存在，`skill-loader` 会提供首次使用引导并给出内置默认值。维护器应能处理由引导生成的配置。
+
 ## 仓库约定
 
 默认扫描以下结构：
