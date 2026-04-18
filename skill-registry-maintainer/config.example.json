@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "registry": {
+    "path": "E:/skills-registry",
+    "indexFile": "index.json"
+  },
+  "behavior": {
+    "dryRun": true,
+    "writeIndexOnRebuild": true,
+    "reportDuplicates": true,
+    "reportMissingDescription": true
+  },
+  "aliases": {
+    "word": "docx",
+    "excel": "xlsx",
+    "ppt": "pptx",
+    "powerpoint": "pptx",
+    "表格": "xlsx",
+    "文档": "docx",
+    "幻灯片": "pptx",
+    "pdf处理": "pdf"
+  }
+}
