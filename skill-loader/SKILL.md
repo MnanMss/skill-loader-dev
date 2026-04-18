@@ -216,6 +216,8 @@ C:\Users\<username>\.config\skill-loader\config.json
 
 5. 引导完成后，继续后续加载流程。
 
+   > 提示：如果需要扫描你已有的全局 skill 并给出迁移建议，或初始化 registry 目录结构，可以运行 `skill-registry-maintainer`。
+
 **配置文件已存在时：**
 
 直接读取生效配置，获取：
