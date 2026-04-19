@@ -52,6 +52,8 @@
 
 ## 仓库结构
 
+`skill-loader-dev` 是**开发仓库**，只保存 `skill-loader` 与 `skill-registry-maintainer` 的定义、文档和示例配置；它不承载实际运行时的 skill 数据。
+
 ```text
 skill-loader-dev/
 ├── README.md
@@ -65,15 +67,23 @@ skill-loader-dev/
     └── config.example.json
 ```
 
-配套的本地 registry 结构建议如下：
+配套的本地 registry 应作为**独立的运行时仓库**存在，建议使用单独的 Git 仓库进行版本管理，例如 `E:/skills-registry`：
 
 ```text
 skills-registry/
+├── .git/
+├── .gitignore
 ├── index.json
 ├── official/
 ├── community/
 └── custom/
 ```
+
+约定：
+
+- `skill-loader-dev` 与 `skills-registry` 分离维护，不要把运行时 registry 放进开发仓库中
+- `index.json` 是 runtime registry 的可消费索引，也是发布产物，应提交到 `skills-registry`
+- `skills-registry/.gitignore` 只应忽略编辑器或系统噪音文件，不应忽略 `index.json`、skill 目录或 `SKILL.md`
 
 ## 组件说明
 
@@ -336,6 +346,8 @@ Global skill matching
 
 ### Repository layout
 
+`skill-loader-dev` is the **development repository**. It only stores the definitions, docs, and example configs for `skill-loader` and `skill-registry-maintainer`; it should not contain runtime skill data.
+
 ```text
 skill-loader-dev/
 ├── README.md
@@ -349,15 +361,23 @@ skill-loader-dev/
     └── config.example.json
 ```
 
-Suggested local registry layout:
+The local registry should exist as a **separate runtime repository**, ideally managed as its own Git repository, for example `E:/skills-registry`:
 
 ```text
 skills-registry/
+├── .git/
+├── .gitignore
 ├── index.json
 ├── official/
 ├── community/
 └── custom/
 ```
+
+Conventions:
+
+- keep `skill-loader-dev` and `skills-registry` separate — do not place the runtime registry inside the development repo
+- `index.json` is the consumable runtime index and should be committed in `skills-registry`
+- `skills-registry/.gitignore` should ignore only editor/OS noise, not `index.json`, skill directories, or `SKILL.md`
 
 ### Components
 

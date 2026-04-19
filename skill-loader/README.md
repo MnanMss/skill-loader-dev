@@ -4,6 +4,8 @@ Skill Loader 是一个常驻全局的轻量入口 skill，负责识别"项目级
 
 本文档面向用户，说明如何配置 skill-loader。
 
+> 建议将 `registry.path` 指向独立的 runtime registry 仓库（如 `E:/skills-registry`），而不是 `skill-loader-dev` 开发仓库。
+
 ---
 
 ## 快速开始
@@ -14,9 +16,9 @@ Skill Loader 是一个常驻全局的轻量入口 skill，负责识别"项目级
    cp skill-loader/config.example.json skill-loader/config.json
    ```
 
-2. 修改 `skill-loader/config.json` 中的 `registry.path` 为你本地的 skill 仓库目录。
+2. 修改 `skill-loader/config.json` 中的 `registry.path` 为你本地的 **runtime registry 仓库目录**，推荐使用独立路径，如 `E:/skills-registry`。
 
-3. 首次使用时，skill-loader 会检测配置并主动引导你完成设置。你也可以手动创建配置文件：
+3. 首次使用时，skill-loader 会检测配置并主动引导你完成设置。推荐随后使用 `skill-registry-maintainer` 完成 runtime registry 初始化，而不只是手工建目录。你也可以手动创建配置文件：
 
    - **Windows**：`C:\Users\<username>\.config\skill-loader\config.json`
    - **macOS / Linux**：`~/.config/skill-loader/config.json`
@@ -44,7 +46,7 @@ skill-loader 按以下优先级读取配置，高优先级覆盖低优先级：
 
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| `path` | string | 是 | 本地 skill 仓库根目录。例如 `E:/skills-registry` 或 `~/skills-registry` |
+| `path` | string | 是 | 本地 runtime registry 根目录。例如 `E:/skills-registry` 或 `~/skills-registry`。建议它是独立于 `skill-loader-dev` 的单独仓库 |
 | `indexFile` | string | 是 | 索引文件名，通常保持 `index.json` |
 
 ### `behavior`
@@ -177,7 +179,17 @@ skill-loader 按以下优先级读取配置，高优先级覆盖低优先级：
 
 ### Q: registry 目录不存在怎么办？
 
-首次使用时，skill-loader 会检测目录是否存在并询问是否自动创建。你也可以手动创建：
+推荐做法不是只手工建目录，而是使用 `skill-registry-maintainer` 完成正式初始化。这样可以：
+
+- 创建标准目录结构
+- 初始化 `index.json`
+- 可选启用 Git
+- 可选创建 registry 本地 `.gitignore`
+- 可选扫描全局 skill 并给出迁移建议
+
+手工创建目录只算最小结构准备，并不等于完成 runtime registry 初始化。
+
+如果你只想临时准备基础目录，也可以手动创建：
 
 ```bash
 mkdir -p ~/skills-registry/{official,community,custom}
@@ -186,6 +198,16 @@ mkdir -p ~/skills-registry/{official,community,custom}
 ### Q: 项目级配置和用户级配置冲突时以谁为准？
 
 以 **高优先级** 为准。`~/.config/skill-loader/config.json`（用户级）优先级最高，会覆盖项目级配置。
+
+### Q: `skills-registry` 要不要做 Git 管理？
+
+建议要。`skills-registry` 是实际运行时使用的 skill 仓库，推荐作为独立 Git 仓库维护。
+
+建议：
+
+- 把 `index.json` 一起纳入版本控制
+- 通过 maintainer 执行初始化、迁移、更新索引后，再用 Git 检查差异
+- commit 由用户决定，maintainer 只建议、不自动提交
 
 ### Q: 为什么 `config.json` 不提交到仓库？
 

@@ -65,10 +65,15 @@ trigger:
 
 ## 仓库约定
 
+`registry.path` 指向的是**运行时 skill 仓库**，例如 `E:/skills-registry`。它应与 `skill-loader-dev` 开发仓库分离维护，并建议作为**独立 Git 仓库**存在。
+
 默认扫描以下结构：
 
 ```text
 <registry.path>/
+├── .git/
+├── .gitignore
+├── index.json
 ├── official/
 ├── community/
 └── custom/
@@ -79,6 +84,14 @@ trigger:
 ```text
 SKILL.md
 ```
+
+### Runtime registry Git policy
+
+- `skill-loader-dev` 负责开发 `skill-loader` 与 `skill-registry-maintainer`
+- `skills-registry` 负责承载实际运行时使用的 skill、目录结构与 `index.json`
+- `index.json` 是 runtime registry 的可消费索引，也是发布产物；当 registry 内容变化时，应与对应 skill 变更一起重建、检查并提交
+- maintainer 可以建议用户执行 Git 检查与 commit，但除非用户明确要求，不自动执行 commit
+- `skills-registry/.gitignore` 只应忽略编辑器或系统噪音文件，不应忽略 `index.json`、skill 目录或 `SKILL.md`
 
 ## 维护流程
 
@@ -117,14 +130,24 @@ SKILL.md
 
 3. **询问是否创建**：等待用户确认
 
-4. **创建目录**：若同意，创建上述目录 + 空 `index.json`
+4. **创建目录**：若同意，创建上述目录 + 初始 `index.json`
 
-5. **询问是否扫描全局 skill**：
+5. **询问是否启用 Git**：
+   > 是否在 `<registry.path>` 初始化 Git 仓库？
+   > （推荐启用，便于追踪 skill 增删改与 `index.json` 变更）
+
+   - 若同意：执行 `git init`
+   - 如 `.gitignore` 不存在：可创建 registry 本地 `.gitignore`，仅忽略编辑器或系统噪音文件
+   - 注意：`.gitignore` **不得忽略** `index.json`、skill 目录或 `SKILL.md`
+
+6. **询问是否扫描全局 skill**：
    > 是否扫描你当前的全局 skill，并给出迁移建议？
    > （全局 skill 位于 `~/.claude/skills/`）
 
    - 若同意，进入全局 skill 扫描与迁移推荐流程
    - 若拒绝，初始化完成，后续可手动触发
+
+7. 初始化完成后，建议用户检查改动并视需要执行首次 commit，但不要自动 commit
 
 ### Step 3：全局 skill 扫描与迁移推荐
 
@@ -203,6 +226,15 @@ SKILL.md
 
 忽略无 `SKILL.md` 的目录。
 
+**扫描类操作规则：**
+
+- 扫描仓库、检查配置、检查索引质量属于**只读操作**
+- 只读操作不得：
+  - 创建目录
+  - 改写 `index.json`
+  - 执行迁移
+  - 修改 Git 状态
+
 ### Step 5：提取元数据
 
 优先从 frontmatter 提取：
@@ -248,6 +280,43 @@ SKILL.md
   "description": "Word 文档创建与编辑"
 }
 ```
+
+## 写操作治理规则
+
+对新增 / 移除 / 更新 / 迁移操作，在真正写入前必须完成以下校验：
+
+- `name` 是否存在
+- `description` 是否存在
+- 目标分类是否合理（`official/`、`community/`、`custom/`）
+- 目标路径是否冲突
+- 如果会覆盖现有内容，是否已得到用户确认
+- 写入后是否会影响 `index.json`
+
+## 批量操作确认清单
+
+批量迁移、批量新增或批量移除前，必须先给出预检摘要：
+
+- 涉及哪些 skill
+- 各自目标目录
+- 新增 / 更新 / 删除数量
+- 是否存在冲突或覆盖
+- `index.json` 是否会变化
+
+只有在用户确认后，才能继续执行批量写入。
+
+## 写后建议
+
+写操作完成后，必须：
+
+- 列出改动文件
+- 提示用户使用 Git 检查改动
+- 建议用户执行 commit
+- 不自动 commit
+
+## 回滚原则
+
+- 优先使用 Git 回滚 runtime registry
+- 手工恢复只作为次选方案
 
 ## 常见维护指令
 

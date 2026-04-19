@@ -74,7 +74,7 @@ C:\Users\<username>\.config\skill-loader\config.json
     "installScope": "project",
     "autoSearchRemote": true,
     "autoSearchWeb": false,
-    "confirmBeforeInstall": false
+    "confirmBeforeInstall": true
   },
   "fallback": {
     "remoteRegistry": "skills.sh",
@@ -129,6 +129,7 @@ C:\Users\<username>\.config\skill-loader\config.json
 
 说明：
 - `registry.path` 中的 `~` 根据操作系统展开为实际用户目录
+- `registry.path` 应通常指向外部 runtime registry（如 `E:/skills-registry`），而不是 `skill-loader-dev` 开发仓库
 - `confirmBeforeInstall: true` 为保守策略，首次使用避免误装
 - `aliases` 为空，避免内置别名与全局 skill 冲突
 
@@ -212,11 +213,16 @@ C:\Users\<username>\.config\skill-loader\config.json
    如果用户指定的 registry 路径不存在，询问：
    > registry 目录 `<path>` 不存在，是否自动创建？
 
-   若同意，创建目录。
+   若同意，可先创建基础目录；但这只是最小化准备，不等于完成 runtime registry 初始化。
 
 5. 引导完成后，继续后续加载流程。
 
-   > 提示：如果需要扫描你已有的全局 skill 并给出迁移建议，或初始化 registry 目录结构，可以运行 `skill-registry-maintainer`。
+   > 提示：如果需要把该路径初始化为正式的 runtime registry（包括目录结构、全局 skill 迁移建议，以及可选的 Git 初始化），应运行 `skill-registry-maintainer`。
+
+**额外约定：**
+
+- `skill-loader` 只负责识别意图、读取配置和加载 skill
+- runtime registry 的 Git 策略、维护规范、初始化细则统一由 `skill-registry-maintainer` 负责
 
 **配置文件已存在时：**
 
