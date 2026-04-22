@@ -65,6 +65,16 @@ skill-loader 按以下优先级读取配置，高优先级覆盖低优先级：
 | `remoteRegistry` | string | `skills.sh` | 远程 registry 标识 |
 | `searchCommand` | string | `npx skills find` | 远程搜索命令 |
 
+### 项目级安装的 CLI 目录策略
+
+安装 skill 到当前项目时，skill-loader 会先确定目标 CLI：
+
+- 用户明确指定 `claude`、`trae` 等目标 CLI 时，优先使用用户指定值。
+- 否则根据当前会话、执行入口或上下文自动判断当前运行环境。
+- 如果无法可靠判断当前环境，会先询问用户，不会直接创建目录。
+
+创建 CLI 专属目录时，只创建当前目标 CLI 对应的一个目录。例如目标为 `claude` 时只创建 `claude`，目标为 `trae` 时只创建 `trae`；不会为了兼容性同时创建多个候选 CLI 文件夹。
+
 ### `aliases`
 
 功能关键词到 skill 名称的映射。用于把用户的口语化表达归一化为标准 skill 名。

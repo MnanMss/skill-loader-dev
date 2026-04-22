@@ -134,7 +134,8 @@ skills-registry/
 4. 根据请求类型决定是否确认：
    - **明确点名 skill**：若命中唯一 skill，直接安装
    - **能力型需求**：列出候选，等待用户确认
-5. 执行项目级安装
+5. 确定目标 CLI：优先使用用户明确指定的 `claude`、`trae` 等目标，否则根据当前运行环境判断；无法确定时询问用户
+6. 执行项目级安装，并只创建目标 CLI 对应的一个专属目录，不预创建多个候选 CLI 文件夹
 
 安装命令示例：
 
@@ -429,7 +430,8 @@ When the user explicitly asks for a project-scoped install:
 4. it decides whether confirmation is needed:
    - **explicit named skill**: install directly if there is exactly one match
    - **capability request**: list candidates and wait for confirmation
-5. it installs the selected skill into the current project
+5. it determines the target CLI: use an explicit user choice such as `claude` or `trae` first, otherwise infer from the current runtime environment; ask the user if it cannot be determined
+6. it installs the selected skill into the current project and creates only the target CLI's directory, not multiple candidate CLI folders
 
 Example install command:
 
